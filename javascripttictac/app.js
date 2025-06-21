@@ -5,8 +5,8 @@ let msgContainer = document.querySelector(".msg-container");
 let msg = document.querySelector("#msg");
 
 let turnO = true; //playerX, playerO
+count = 0; //to track draw
 
-//2D arrays
 const winPatterns = [
     [0, 1, 2],
     [0, 3, 6],
@@ -20,6 +20,7 @@ const winPatterns = [
 
 const resetGame = () => {
     turnO = true;
+    count = 0;
     enableBoxes();
     msgContainer.classList.add("hide");
 }
@@ -27,17 +28,30 @@ const resetGame = () => {
 boxes.forEach((box) =>{
     box.addEventListener("click", () => {
         if (turnO) {
+            //player O
             box.innerText = "O";
             turnO = false;
         } else {
+            //player X
             box.innerText = "X";
             turnO = true;
         }
         box.disabled = true;
+        count++;
 
-        checkWinner();
+        let isWinner = checkWinner();
+
+        if(count === 9 && !isWinner) {
+            gameDraw();
+        }
     });
 });
+
+const gameDraw = () => {
+  msg.innerText = `Game was a Draw.`;
+  msgContainer.classList.remove("hide");
+  disableBoxes();
+};
 
 const disableBoxes = () => {
     for(let box of boxes) {
@@ -67,6 +81,7 @@ const checkWinner = () => {
     if (pos1Val != "" && pos2Val != "" && pos3Val != "") {
         if(pos1Val === pos2Val && pos2Val === pos3Val) {
             showWinner(pos1Val);
+            return true;
         }
     }
   };
